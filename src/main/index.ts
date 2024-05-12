@@ -10,15 +10,16 @@ const createWindow = (): void => {
         height: 670,
         show: false,
         title: 'Firestore Edit',
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: 'default',
         autoHideMenuBar: true,
         backgroundMaterial: 'acrylic',
         center: true,
-        frame: false,
+        frame: true,
+        transparent: false,
         vibrancy: 'under-window',
         visualEffectState: 'active',
         trafficLightPosition: { x: 15, y: 10 },
-        ...(process.platform === 'linux' ? { icon } : {}),
+        ...(process.platform === 'linux' ? { icon, backgroundColor: '#5C5470' } : {}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
             sandbox: true,
@@ -43,6 +44,8 @@ const createWindow = (): void => {
         mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
     }
 };
+//createWindow need to wait(more than about 100ms) if you want the window to be transparent
+// app.whenReady().then(createWindow); //this won't work
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -60,8 +63,11 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
-
-    createWindow();
+    app.commandLine.appendSwitch('enable-transparent-visuals');
+    app.commandLine.appendSwitch('disable-gpu');
+    setTimeout(() => {
+        createWindow();
+    }, 200);
 
     app.on('activate', function () {
         // On macOS it's common to re-create a window in the app when the
