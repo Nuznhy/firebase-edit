@@ -1,15 +1,16 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createMemoryHistory, createRouter, RouteRecordRaw } from 'vue-router';
+import Home from '@components/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
-    // {
-    //     path: '/',
-    //     name: 'Home',
-    //     component: Home
-    // }
+    {
+        path: '/home',
+        name: 'Home',
+        component: Home
+    }
 ];
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
+    history: createMemoryHistory(''),
     routes
 });
 

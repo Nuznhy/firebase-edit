@@ -1,9 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import icon from '../../resources/icon.png?asset';
+import icon from '../../resources/Firestore.png?asset';
 
-function createWindow(): void {
+const createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         width: 900,
@@ -42,7 +42,7 @@ function createWindow(): void {
     } else {
         mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
     }
-}
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
