@@ -1,3 +1,12 @@
+<template>
+    <div class="flex flex-row h-screen">
+        <Sidebar></Sidebar>
+        <div :class="contentClassName">
+            <router-view />
+        </div>
+    </div>
+</template>
+
 <script lang="ts">
 import Sidebar from '@components/Sidebar.vue';
 import { computed, defineComponent } from 'vue';
@@ -22,12 +31,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<template>
-    <div class="flex flex-row h-screen">
-        <Sidebar></Sidebar>
-        <div :class="contentClassName">
-            <router-view />
-        </div>
-    </div>
-</template>

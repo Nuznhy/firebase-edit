@@ -1,6 +1,9 @@
 <template>
-    <div :class="sidebarClassName"></div>
+    <div :class="sidebarClassName">
+        <span class="ext-4xl text-amber-50">sidebar</span>
+    </div>
 </template>
+
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { twMerge } from 'tailwind-merge';

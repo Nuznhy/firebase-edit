@@ -3,6 +3,7 @@
         <span class="text-4xl text-amber-50">sample text</span>
     </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 
