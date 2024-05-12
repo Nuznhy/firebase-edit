@@ -10,7 +10,7 @@ function createWindow(): void {
         height: 670,
         show: false,
         title: 'Firestore Edit',
-        backgroundMaterial: 'acrylic',
+        titleBarStyle: 'hiddenInset',
         autoHideMenuBar: true,
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
