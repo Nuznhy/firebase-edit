@@ -1,6 +1,6 @@
 <template>
-    <div className="flex h-full items-center justify-center">
-        <span className="text-4xl text-amber-50">sample text</span>
+    <div class="flex h-full w-full items-center justify-center">
+        <span class="text-4xl text-amber-50">sample text</span>
     </div>
 </template>
 <script lang="ts">
