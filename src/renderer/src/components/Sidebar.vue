@@ -19,7 +19,7 @@ export default defineComponent({
     },
     setup(props) {
         const sidebarClassName = computed(() => {
-            return twMerge('w-[250px] mt-10 h-[100vh + 10px] overflow-auto', props.sidebarClass);
+            return twMerge('w-[250px] h-[100vh + 10px] overflow-auto', props.sidebarClass);
         });
         return {
             sidebarClassName

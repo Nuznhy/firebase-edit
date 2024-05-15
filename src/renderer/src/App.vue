@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-row h-screen">
-        <Sidebar></Sidebar>
+        <Sidebar class="p-2 bg-zinc-700"></Sidebar>
         <div :class="contentClassName">
-            <router-view />
+            <router-view class="border-l bg-zinc-900 border-l-white/20" />
         </div>
     </div>
 </template>
