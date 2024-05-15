@@ -14,4 +14,4 @@ app.use(store);
 
 app.use(router);
 router.push({ path: '/home' }).catch((err) => console.log(err));
-app.mount('#app');
+app.mount('body');

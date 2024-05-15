@@ -1,20 +1,22 @@
 <template>
+    <HeaderComponent></HeaderComponent>
     <div class="flex flex-row h-screen">
-        <Sidebar class="p-2 bg-zinc-700"></Sidebar>
+        <Sidebar class="p-2 bg-zinc-700/50 opacity-100"></Sidebar>
         <div :class="contentClassName">
-            <router-view class="border-l bg-zinc-900 border-l-white/20" />
+            <router-view class="border-l bg-zinc-900/50 border-l-white/20" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import Sidebar from '@components/Sidebar.vue';
+import HeaderComponent from '@components/HeaderComponent.vue';
 import { computed, defineComponent } from 'vue';
 import { twMerge } from 'tailwind-merge';
 
 export default defineComponent({
     name: 'App',
-    components: { Sidebar },
+    components: { Sidebar, HeaderComponent },
     props: {
         contentClass: {
             type: String,
@@ -23,7 +25,7 @@ export default defineComponent({
     },
     setup(props) {
         const contentClassName = computed(() => {
-            return twMerge('flex h-full w-full overflow-auto', props.contentClass);
+            return twMerge('flex h-full w-full overflow-auto mt-8', props.contentClass);
         });
         return {
             contentClassName
