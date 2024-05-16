@@ -5,21 +5,39 @@
             <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
         </div>
         <div id="select-config" :class="sideBarContentSeparationClassName">
-            <label for="select-firebase-config" class="sr-only">Select config</label>
+            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white"
+                >⚙️ Select config</label
+            >
             <select
                 id="select-firebase-config"
                 v-model="selectedConfig"
                 name="select-firebase-config"
                 :class="selectClassName"
             >
-                <option selected>⚙️ Select config</option>
                 <option v-for="(config, index) in availableConfigsList" :key="index" :value="config.path">
                     {{ config.name }}
                 </option>
             </select>
         </div>
         <div id="select-firebase-editable-module" :class="sideBarContentSeparationClassName">
-            <span>select-firebase-editable-module</span>
+            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white"
+                >⚙️ Select firebase</label
+            >
+            <select
+                id="select-firebase-config"
+                v-model="selectedFirebaseModule"
+                name="select-firebase-config"
+                :class="selectClassName"
+                @change="onFirebaseModuleSelect(selectedFirebaseModule)"
+            >
+                <option
+                    v-for="(firebaseModule, index) in availableFirebaseModulesList"
+                    :key="index"
+                    :value="firebaseModule"
+                >
+                    {{ firebaseModule.name }}
+                </option>
+            </select>
         </div>
     </div>
 </template>
@@ -57,11 +75,12 @@ export default defineComponent({
         });
         const selectClassName = computed(() => {
             return twMerge(
-                'block py-2.5 px-0 w-full text-amber-50 bg-transparent appearance-none ' +
-                    'dark:text-amber-50 dark:border-gray-700 focus:outline-none focus:ring-0 peer',
+                'bg-gray-700 bg-transparent border border-gray-500 text-amber-200 text-sm' +
+                    'hover:border-grey-200 block w-full p-2.5',
                 props.selectClass
             );
         });
+
         return {
             sideBarContentSeparationClassName,
             sidebarClassName,
@@ -75,14 +94,35 @@ export default defineComponent({
                 { name: 'remomedi-hub', path: '/home/blablaB.json' },
                 { name: 'apoteket-hamta-dev', path: '/home/blablaC.json' }
             ],
-            selectedConfig: '⚙️ Select config',
-            firebaseModulesForEdit: ['database', 'firestore', 'auth']
+            firebaseModulesForEdit: [
+                { name: 'firestore', routerPath: '/firestore-edit' },
+                { name: 'database', routerPath: '/database-edit' },
+                { name: 'auth', routerPath: '/auth-edit' }
+            ],
+            selectedFirebaseModule: { name: 'firestore', routerPath: '/firestore-edit' },
+            selectedConfig: ''
         };
     },
     computed: {
         availableConfigsList() {
             return this.availableConfigs;
+        },
+        availableFirebaseModulesList() {
+            return this.firebaseModulesForEdit;
+        }
+        // selectedConfig() {
+        //     return this.availableConfigs[0] || '⚙️ Select config';
+        // },
+        // selectedFirebaseModule() {
+        //     return this.firebaseModulesForEdit[0] || '⚙️ Select firebase';
+        // }
+    },
+    methods: {
+        onFirebaseModuleSelect(selected) {
+            console.log(this.selectedConfig);
+            this.$router.push(selected.routerPath);
         }
     }
 });
 </script>
+<!-- TODO: add on hover bg-color change-->
