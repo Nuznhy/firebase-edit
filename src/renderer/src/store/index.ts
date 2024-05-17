@@ -1,5 +1,6 @@
 import Vuex, { StoreOptions } from 'vuex';
 import { RootState } from './types';
+import { configs } from './modules/configs';
 
 const store: StoreOptions<RootState> = {
     state: {
@@ -7,7 +8,9 @@ const store: StoreOptions<RootState> = {
     },
     mutations: {},
     actions: {},
-    modules: {}
+    modules: {
+        configs
+    }
 };
 
 export default new Vuex.Store<RootState>(store);

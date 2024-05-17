@@ -5,31 +5,29 @@
             <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
         </div>
         <div id="select-config" :class="sideBarContentSeparationClassName">
-            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white"
-                >⚙️ Select config</label
-            >
+            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Config</label>
             <select
                 id="select-firebase-config"
                 v-model="selectedConfig"
                 name="select-firebase-config"
                 :class="selectClassName"
             >
+                <option selected disabled>Select config</option>
                 <option v-for="(config, index) in availableConfigsList" :key="index" :value="config.path">
                     {{ config.name }}
                 </option>
             </select>
         </div>
         <div id="select-firebase-editable-module" :class="sideBarContentSeparationClassName">
-            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white"
-                >⚙️ Select firebase</label
-            >
+            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Firebase</label>
             <select
                 id="select-firebase-config"
                 v-model="selectedFirebaseModule"
                 name="select-firebase-config"
                 :class="selectClassName"
-                @change="onFirebaseModuleSelect(selectedFirebaseModule)"
+                @change="onFirebaseModuleSelect()"
             >
+                <option selected disabled>Select firebase</option>
                 <option
                     v-for="(firebaseModule, index) in availableFirebaseModulesList"
                     :key="index"
@@ -44,6 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
+import { mapState } from 'vuex';
 import { twMerge } from 'tailwind-merge';
 
 export default defineComponent({
@@ -88,39 +87,20 @@ export default defineComponent({
         };
     },
     data: () => {
-        return {
-            availableConfigs: [
-                { name: 'remomedi-hub-dev', path: '/home/blablaA.json' },
-                { name: 'remomedi-hub', path: '/home/blablaB.json' },
-                { name: 'apoteket-hamta-dev', path: '/home/blablaC.json' }
-            ],
-            firebaseModulesForEdit: [
-                { name: 'firestore', routerPath: '/firestore-edit' },
-                { name: 'database', routerPath: '/database-edit' },
-                { name: 'auth', routerPath: '/auth-edit' }
-            ],
-            selectedFirebaseModule: { name: 'firestore', routerPath: '/firestore-edit' },
-            selectedConfig: ''
-        };
+        return {};
     },
     computed: {
-        availableConfigsList() {
-            return this.availableConfigs;
-        },
-        availableFirebaseModulesList() {
-            return this.firebaseModulesForEdit;
-        }
-        // selectedConfig() {
-        //     return this.availableConfigs[0] || '⚙️ Select config';
-        // },
-        // selectedFirebaseModule() {
-        //     return this.firebaseModulesForEdit[0] || '⚙️ Select firebase';
-        // }
+        ...mapState('configs', [
+            'availableConfigsList',
+            'availableFirebaseModulesList',
+            'selectedConfig',
+            'selectedFirebaseModule'
+        ])
     },
     methods: {
-        onFirebaseModuleSelect(selected) {
+        onFirebaseModuleSelect() {
             console.log(this.selectedConfig);
-            this.$router.push(selected.routerPath);
+            this.$router.push(this.selectedConfig.routerPath);
         }
     }
 });
