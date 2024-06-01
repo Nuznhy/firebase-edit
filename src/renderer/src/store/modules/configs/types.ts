@@ -1,6 +1,6 @@
-export interface ConfigRootState {
-    availableConfigsList: Array<Config>;
-    availableFirebaseModulesList: Array<FirebaseModule>;
+export interface ConfigState {
+    availableConfigs: Array<Config>;
+    availableFirebaseModules: Array<FirebaseModule>;
     selectedFirebaseModule: string;
     selectedConfig: string;
 }

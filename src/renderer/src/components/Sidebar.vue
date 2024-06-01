@@ -1,7 +1,7 @@
 <template>
     <div :class="sidebarClassName">
         <div id="add-config" :class="sideBarContentSeparationClassName">
-            <input id="add-config-button" type="file" style="display: none" />
+            <input id="add-config-button" ref="file" type="file" style="display: none" @change="readFile" />
             <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
         </div>
         <div id="select-config" :class="sideBarContentSeparationClassName">
@@ -13,7 +13,7 @@
                 :class="selectClassName"
             >
                 <option selected disabled>Select config</option>
-                <option v-for="(config, index) in availableConfigsList" :key="index" :value="config.path">
+                <option v-for="(config, index) in availableConfigs" :key="index" :value="config.path">
                     {{ config.name }}
                 </option>
             </select>
@@ -29,7 +29,7 @@
             >
                 <option selected disabled>Select firebase</option>
                 <option
-                    v-for="(firebaseModule, index) in availableFirebaseModulesList"
+                    v-for="(firebaseModule, index) in availableFirebaseModules"
                     :key="index"
                     :value="firebaseModule"
                 >
@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { twMerge } from 'tailwind-merge';
 
 export default defineComponent({
@@ -90,9 +90,9 @@ export default defineComponent({
         return {};
     },
     computed: {
-        ...mapState('configs', [
-            'availableConfigsList',
-            'availableFirebaseModulesList',
+        ...mapGetters('configs', [
+            'availableConfigs',
+            'availableFirebaseModules',
             'selectedConfig',
             'selectedFirebaseModule'
         ])
@@ -101,6 +101,20 @@ export default defineComponent({
         onFirebaseModuleSelect() {
             console.log(this.selectedConfig);
             this.$router.push(this.selectedConfig.routerPath);
+        },
+        readFile() {
+            // console.log(this.$refs.file.files[0]);
+            const getBase64 = (file: File) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    // console.log(reader.result);
+                };
+                reader.onerror = (error) => {
+                    // console.log('Error converting file to base64: ', error);
+                };
+            };
+            getBase64(this.$refs.file.files[0]);
         }
     }
 });
