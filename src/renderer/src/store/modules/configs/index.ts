@@ -2,6 +2,8 @@ import { Module } from 'vuex';
 import { RootState } from '@/store/types';
 import { ConfigState } from './types';
 import { getters } from './getters';
+import { mutations } from './mutations';
+import { actions } from './actions';
 
 const state: ConfigState = {
     availableConfigs: [
@@ -14,14 +16,14 @@ const state: ConfigState = {
         { name: 'database', routerPath: '/database-edit' },
         { name: 'auth', routerPath: '/auth-edit' }
     ],
-    selectedFirebaseModule: 'Select firebase',
-    selectedConfig: 'Select config'
+    selectedFirebaseModule: { name: 'firestore', routerPath: '/firestore-edit' },
+    selectedConfig: { name: '', path: '' }
 };
 
 export const configs: Module<ConfigState, RootState> = {
     namespaced: true,
     state,
-    getters
-    // actions: {},
-    // mutations: {}
+    getters,
+    actions,
+    mutations
 };

@@ -22,10 +22,10 @@
             <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Firebase</label>
             <select
                 id="select-firebase-config"
-                v-model="selectedFirebaseModule"
+                v-model="currentFirebaseModule"
                 name="select-firebase-config"
                 :class="selectClassName"
-                @change="onFirebaseModuleSelect()"
+                @change="onFirebaseModuleSelect(currentFirebaseModule)"
             >
                 <option selected disabled>Select firebase</option>
                 <option
@@ -42,8 +42,10 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { twMerge } from 'tailwind-merge';
+import { FirebaseModule } from '../store/modules/configs/types';
+import router from '../router';
 
 export default defineComponent({
     name: 'Sidebar',
@@ -87,7 +89,7 @@ export default defineComponent({
         };
     },
     data: () => {
-        return {};
+        return { currentFirebaseModule: { name: '', routerPath: '' } };
     },
     computed: {
         ...mapGetters('configs', [
@@ -98,23 +100,26 @@ export default defineComponent({
         ])
     },
     methods: {
-        onFirebaseModuleSelect() {
-            console.log(this.selectedConfig);
-            this.$router.push(this.selectedConfig.routerPath);
+        ...mapActions('configs', ['updateCurrentFirebaseModule']),
+
+        async onFirebaseModuleSelect(module: FirebaseModule) {
+            await router.push(module.routerPath);
+            console.log(module);
+            await this.updateCurrentFirebaseModule(module);
         },
         readFile() {
             // console.log(this.$refs.file.files[0]);
-            const getBase64 = (file: File) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    // console.log(reader.result);
-                };
-                reader.onerror = (error) => {
-                    // console.log('Error converting file to base64: ', error);
-                };
-            };
-            getBase64(this.$refs.file.files[0]);
+            // const getBase64 = (file: File) => {
+            //     const reader = new FileReader();
+            //     reader.readAsDataURL(file);
+            //     reader.onload = () => {
+            //         // console.log(reader.result);
+            //     };
+            //     reader.onerror = (error) => {
+            //         // console.log('Error converting file to base64: ', error);
+            //     };
+            // };
+            // getBase64(this.$refs.file.files[0]);
         }
     }
 });
