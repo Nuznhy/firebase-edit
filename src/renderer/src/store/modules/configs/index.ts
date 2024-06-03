@@ -6,18 +6,14 @@ import { mutations } from './mutations';
 import { actions } from './actions';
 
 const state: ConfigState = {
-    availableConfigs: [
-        { name: 'remomedi-hub-dev', path: '/home/blablaA.json' },
-        { name: 'remomedi-hub', path: '/home/blablaB.json' },
-        { name: 'apoteket-hamta-dev', path: '/home/blablaC.json' }
-    ],
+    availableConfigs: [],
     availableFirebaseModules: [
         { name: 'firestore', routerPath: '/firestore-edit' },
         { name: 'database', routerPath: '/database-edit' },
         { name: 'auth', routerPath: '/auth-edit' }
     ],
     selectedFirebaseModule: { name: 'firestore', routerPath: '/firestore-edit' },
-    selectedConfig: { name: '', path: '' }
+    selectedConfig: 'Select config'
 };
 
 export const configs: Module<ConfigState, RootState> = {

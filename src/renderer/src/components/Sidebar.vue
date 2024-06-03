@@ -1,20 +1,21 @@
 <template>
     <div :class="sidebarClassName">
         <div id="add-config" :class="sideBarContentSeparationClassName">
-            <input id="add-config-button" ref="file" type="file" style="display: none" @change="readFile" />
+            <input id="add-config-button" type="file" style="display: none" @change="readFile" />
             <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
         </div>
         <div id="select-config" :class="sideBarContentSeparationClassName">
             <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Config</label>
             <select
                 id="select-firebase-config"
-                v-model="selectedConfig"
+                v-model="currentSelectedConfig"
                 name="select-firebase-config"
                 :class="selectClassName"
+                @change="onFirebaseConfigChange(currentSelectedConfig)"
             >
                 <option selected disabled>Select config</option>
-                <option v-for="(config, index) in availableConfigs" :key="index" :value="config.path">
-                    {{ config.name }}
+                <option v-for="(config, index) in availableConfigs" :key="index" :value="config">
+                    {{ config }}
                 </option>
             </select>
         </div>
@@ -27,7 +28,7 @@
                 :class="selectClassName"
                 @change="onFirebaseModuleSelect(currentFirebaseModule)"
             >
-                <option selected disabled>Select firebase</option>
+                <option selected disabled>{{ currentFirebaseModule.name }}</option>
                 <option
                     v-for="(firebaseModule, index) in availableFirebaseModules"
                     :key="index"
@@ -46,6 +47,7 @@ import { mapActions, mapGetters } from 'vuex';
 import { twMerge } from 'tailwind-merge';
 import { FirebaseModule } from '../store/modules/configs/types';
 import router from '../router';
+import { FileWithPath, InputFileEvent } from './types';
 
 export default defineComponent({
     name: 'Sidebar',
@@ -81,7 +83,6 @@ export default defineComponent({
                 props.selectClass
             );
         });
-
         return {
             sideBarContentSeparationClassName,
             sidebarClassName,
@@ -89,7 +90,9 @@ export default defineComponent({
         };
     },
     data: () => {
-        return { currentFirebaseModule: { name: '', routerPath: '' } };
+        const currentFirebaseModule = { name: 'Select', routerPath: '' };
+        const currentSelectedConfig = 'Select';
+        return { currentFirebaseModule, currentSelectedConfig };
     },
     computed: {
         ...mapGetters('configs', [
@@ -100,26 +103,33 @@ export default defineComponent({
         ])
     },
     methods: {
-        ...mapActions('configs', ['updateCurrentFirebaseModule']),
+        ...mapActions('configs', ['updateCurrentFirebaseModule', 'updateCurrentFirebaseConfig', 'addFirebaseConfig']),
 
         async onFirebaseModuleSelect(module: FirebaseModule) {
             await router.push(module.routerPath);
-            console.log(module);
             await this.updateCurrentFirebaseModule(module);
         },
-        readFile() {
-            // console.log(this.$refs.file.files[0]);
-            // const getBase64 = (file: File) => {
-            //     const reader = new FileReader();
-            //     reader.readAsDataURL(file);
-            //     reader.onload = () => {
-            //         // console.log(reader.result);
-            //     };
-            //     reader.onerror = (error) => {
-            //         // console.log('Error converting file to base64: ', error);
-            //     };
-            // };
-            // getBase64(this.$refs.file.files[0]);
+
+        async onFirebaseConfigChange(configName: string) {
+            await this.updateCurrentFirebaseConfig(configName);
+        },
+
+        async readFile(payload: Event) {
+            const event = payload as InputFileEvent;
+            if (event.target.files) {
+                const configFile = event.target.files[0] as FileWithPath;
+                const config: any = JSON.parse(await configFile.text());
+                let configName: string;
+                if (config.firebaseAdminConfig) {
+                    configName = config.firebaseAdminConfig.project_id;
+                } else {
+                    configName = config.project_id;
+                }
+                await window.context.createImportedConfigCopy(configFile.path, configName + '.json');
+                await this.addFirebaseConfig(configName);
+                await this.updateCurrentFirebaseConfig(configName);
+                this.currentSelectedConfig = configName;
+            }
         }
     }
 });

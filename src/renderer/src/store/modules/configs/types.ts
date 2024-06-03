@@ -1,14 +1,14 @@
 export interface ConfigState {
-    availableConfigs: Array<Config>;
+    availableConfigs: Array<string>;
     availableFirebaseModules: Array<FirebaseModule>;
     selectedFirebaseModule: FirebaseModule;
-    selectedConfig: Config;
+    selectedConfig: string;
 }
 
-export interface Config {
-    name: string;
-    path: string;
-}
+// export interface Config {
+//     name: string;
+//     path: string;
+// }
 
 export interface FirebaseModule {
     name: string;

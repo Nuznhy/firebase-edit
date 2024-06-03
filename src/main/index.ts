@@ -2,9 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/Firestore.png?asset';
+import { createImportedConfigCopy, getConfigFromFileName, getConfigsFiles } from './lib';
+import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName } from '../shared/types';
 
 const createWindow = (): void => {
     // Create the browser window.
+    console.log(join(__dirname, '../preload/index.js'));
     const mainWindow = new BrowserWindow({
         width: 900,
         height: 670,
@@ -20,6 +23,7 @@ const createWindow = (): void => {
         ...(process.platform === 'linux' ? { icon, backgroundColor: '#5C5470' } : {}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
+            nodeIntegration: true,
             sandbox: true,
             contextIsolation: true
         }
@@ -51,7 +55,6 @@ const createWindow = (): void => {
 app.whenReady().then(() => {
     // Set app user model id for windows
     electronApp.setAppUserModelId('com.electron');
-
     // Default open or close DevTools by F12 in development
     // and ignore CommandOrControl + R in production.
     // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -61,6 +64,21 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
+    ipcMain.handle(
+        'getConfigsFiles',
+        async (_, ...args: Parameters<GetConfigsFiles>) => await getConfigsFiles(...args)
+    );
+
+    ipcMain.handle(
+        'getConfigFromFileName',
+        async (_, ...args: Parameters<GetConfigFromFileName>) => await getConfigFromFileName(...args)
+    );
+
+    ipcMain.handle(
+        'createImportedConfigCopy',
+        async (_, ...args: Parameters<CreateImportedConfigCopy>) => await createImportedConfigCopy(...args)
+    );
+
     app.commandLine.appendSwitch('enable-transparent-visuals');
     app.commandLine.appendSwitch('disable-gpu');
     setTimeout(() => {

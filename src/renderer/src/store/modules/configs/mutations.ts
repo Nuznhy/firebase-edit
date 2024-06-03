@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { ConfigState, Config, FirebaseModule } from './types';
+import { ConfigState, FirebaseModule } from './types';
 
 export const enum ConfigMutations {
     add_config = 'add_config',
@@ -8,10 +8,10 @@ export const enum ConfigMutations {
 }
 
 export const mutations: MutationTree<ConfigState> = {
-    [ConfigMutations.add_config](state: ConfigState, config: Config) {
+    [ConfigMutations.add_config](state: ConfigState, config: string) {
         state.availableConfigs.push(config);
     },
-    [ConfigMutations.set_active_config](state: ConfigState, config: Config) {
+    [ConfigMutations.set_active_config](state: ConfigState, config: string) {
         state.selectedConfig = config;
     },
     [ConfigMutations.set_active_firebase_module](state: ConfigState, module: FirebaseModule) {
