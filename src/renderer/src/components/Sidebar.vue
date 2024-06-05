@@ -1,57 +1,64 @@
 <template>
-    <div :class="sidebarClassName">
-        <div id="add-config" :class="sideBarContentSeparationClassName">
-            <input id="add-config-button" type="file" style="display: none" @change="readFile" />
-            <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
-        </div>
-        <div id="select-config" :class="sideBarContentSeparationClassName">
-            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Config</label>
-            <select
-                id="select-firebase-config"
-                v-model="currentSelectedConfig"
-                name="select-firebase-config"
-                :class="selectClassName"
-                @change="onFirebaseConfigChange(currentSelectedConfig)"
-            >
-                <option selected disabled>Select config</option>
-                <option v-for="(config, index) in availableConfigs" :key="index" :value="config">
-                    {{ config }}
-                </option>
-            </select>
-        </div>
-        <div id="select-firebase-editable-module" :class="sideBarContentSeparationClassName">
-            <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Firebase</label>
-            <select
-                id="select-firebase-config"
-                v-model="currentFirebaseModule"
-                name="select-firebase-config"
-                :class="selectClassName"
-                @change="onFirebaseModuleSelect(currentFirebaseModule)"
-            >
-                <option selected disabled>{{ currentFirebaseModule.name }}</option>
-                <option
-                    v-for="(firebaseModule, index) in availableFirebaseModules"
-                    :key="index"
-                    :value="firebaseModule"
+    <vue-resizable
+        class="resizable h-screen justify-beetween mt-8"
+        :min-width="300"
+        :max-width="500"
+        :width="300"
+        style="height: auto"
+    >
+        <div :class="sidebarClassName">
+            <div id="add-config" :class="sideBarContentSeparationClassName">
+                <input id="add-config-button" type="file" style="display: none" @change="readFile" />
+                <label for="add-config-button" class="text-amber-50">🛠️ Add config</label>
+            </div>
+            <div id="select-config" :class="sideBarContentSeparationClassName">
+                <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Config</label>
+                <select
+                    id="select-firebase-config"
+                    name="select-firebase-config"
+                    :class="selectClassName"
+                    @change="onFirebaseConfigChange"
                 >
-                    {{ firebaseModule.name }}
-                </option>
-            </select>
+                    <option selected disabled>Select</option>
+                    <option v-for="(config, index) in availableConfigs" :key="index" :value="config">
+                        {{ config }}
+                    </option>
+                </select>
+            </div>
+            <div id="select-firebase-editable-module" :class="sideBarContentSeparationClassName">
+                <label for="select-firebase-config" class="block mb-2 text-amber-50 dark:text-white">⚙️ Firebase</label>
+                <select
+                    id="select-firebase-config"
+                    name="select-firebase-config"
+                    :class="selectClassName"
+                    @change="onFirebaseModuleSelect"
+                >
+                    <option selected disabled>Select</option>
+                    <option
+                        v-for="(module, index) in availableFirebaseModules"
+                        :key="index"
+                        :value="JSON.stringify(module)"
+                    >
+                        {{ module.name }}
+                    </option>
+                </select>
+            </div>
         </div>
-    </div>
+    </vue-resizable>
 </template>
 
 <script lang="ts">
+import VueResizable from 'vue-resizable';
 import { defineComponent, computed } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 import { twMerge } from 'tailwind-merge';
-import { FirebaseModule } from '../store/modules/configs/types';
-import router from '../router';
 import { FileWithPath, InputFileEvent } from './types';
+import router from '../router';
+import { FirebaseModule } from '../store/modules/configs/types';
 
 export default defineComponent({
     name: 'Sidebar',
-    components: {},
+    components: { VueResizable },
     props: {
         sidebarClass: {
             type: String,
@@ -69,7 +76,7 @@ export default defineComponent({
     setup(props) {
         const sidebarClassName = computed(() => {
             return twMerge(
-                'flex flex-col h-screen justify-beetween w-[250px] mt-8 h-[100vh + 10px] overflow-auto',
+                'flex flex-col h-screen justify-beetween     h-[100vh + 10px] overflow-auto',
                 props.sidebarClass
             );
         });
@@ -89,11 +96,6 @@ export default defineComponent({
             selectClassName
         };
     },
-    data: () => {
-        const currentFirebaseModule = { name: 'Select', routerPath: '' };
-        const currentSelectedConfig = 'Select';
-        return { currentFirebaseModule, currentSelectedConfig };
-    },
     computed: {
         ...mapGetters('configs', [
             'availableConfigs',
@@ -105,13 +107,18 @@ export default defineComponent({
     methods: {
         ...mapActions('configs', ['updateCurrentFirebaseModule', 'updateCurrentFirebaseConfig', 'addFirebaseConfig']),
 
-        async onFirebaseModuleSelect(module: FirebaseModule) {
+        async onFirebaseModuleSelect(event: Event) {
+            const target = event.target as HTMLSelectElement;
+            const module = JSON.parse(target.value) as FirebaseModule;
+
             await router.push(module.routerPath);
-            await this.updateCurrentFirebaseModule(module);
+            await this.updateCurrentFirebaseModule(module.name);
         },
 
-        async onFirebaseConfigChange(configName: string) {
-            await this.updateCurrentFirebaseConfig(configName);
+        async onFirebaseConfigChange(event: Event) {
+            const target = event.target as HTMLSelectElement;
+            await window.context.initializeAdminApp(target.value);
+            await this.updateCurrentFirebaseConfig(target.value);
         },
 
         async readFile(payload: Event) {
@@ -125,10 +132,12 @@ export default defineComponent({
                 } else {
                     configName = config.project_id;
                 }
-                await window.context.createImportedConfigCopy(configFile.path, configName + '.json');
-                await this.addFirebaseConfig(configName);
+                console.log(this.selectedConfig);
                 await this.updateCurrentFirebaseConfig(configName);
-                this.currentSelectedConfig = configName;
+                await window.context.createImportedConfigCopy(configFile.path, configName + '.json');
+                console.log(this.selectedConfig);
+                if (this.availableConfigs.includes(configName)) return;
+                await this.addFirebaseConfig(configName);
             }
         }
     }

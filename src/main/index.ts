@@ -3,11 +3,11 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/Firestore.png?asset';
 import { createImportedConfigCopy, getConfigFromFileName, getConfigsFiles } from './lib';
-import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName } from '../shared/types';
+import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName, InitializeAdminApp } from '../shared/types';
+import { initializeAdminApp } from './lib/firebaseAdmin';
 
 const createWindow = (): void => {
     // Create the browser window.
-    console.log(join(__dirname, '../preload/index.js'));
     const mainWindow = new BrowserWindow({
         width: 900,
         height: 670,
@@ -77,6 +77,11 @@ app.whenReady().then(() => {
     ipcMain.handle(
         'createImportedConfigCopy',
         async (_, ...args: Parameters<CreateImportedConfigCopy>) => await createImportedConfigCopy(...args)
+    );
+
+    ipcMain.handle(
+        'initializeAdminApp',
+        async (_, ...args: Parameters<InitializeAdminApp>) => await initializeAdminApp(...args)
     );
 
     app.commandLine.appendSwitch('enable-transparent-visuals');

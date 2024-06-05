@@ -6,14 +6,14 @@ import { mutations } from './mutations';
 import { actions } from './actions';
 
 const state: ConfigState = {
-    availableConfigs: [],
+    availableConfigs: await window.context.getConfigsFiles(),
+    selectedConfig: 'Select',
     availableFirebaseModules: [
         { name: 'firestore', routerPath: '/firestore-edit' },
         { name: 'database', routerPath: '/database-edit' },
         { name: 'auth', routerPath: '/auth-edit' }
     ],
-    selectedFirebaseModule: { name: 'firestore', routerPath: '/firestore-edit' },
-    selectedConfig: 'Select config'
+    selectedFirebaseModule: { name: 'Select', routerPath: '' }
 };
 
 export const configs: Module<ConfigState, RootState> = {

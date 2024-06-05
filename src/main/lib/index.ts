@@ -13,7 +13,8 @@ export const getConfigsFiles: GetConfigsFiles = async (): Promise<string[]> => {
     const rootDir = getRootDir();
     await ensureDir(rootDir);
     const configFileNames = await readdir(rootDir, { withFileTypes: false, encoding: fileEncoding });
-    return configFileNames.filter((fileName) => fileName.endsWith('.json'));
+    const filtered = configFileNames.filter((fileName) => fileName.endsWith('.json'));
+    return filtered.map((config) => config.replace(/\.[^/.]+$/, ''));
 };
 
 export const getConfigFromFileName: GetConfigFromFileName = async (

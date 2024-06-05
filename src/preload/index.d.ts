@@ -1,6 +1,6 @@
 // import { ElectronAPI } from '@electron-toolkit/preload';
 
-import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName } from '../shared/types';
+import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName, InitializeAdminApp } from '../shared/types';
 
 declare global {
     interface Window {
@@ -8,6 +8,7 @@ declare global {
             createImportedConfigCopy: CreateImportedConfigCopy;
             getConfigsFiles: GetConfigsFiles;
             getConfigFromFileName: GetConfigFromFileName;
+            initializeAdminApp: InitializeAdminApp;
         };
     }
 }
