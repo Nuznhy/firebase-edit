@@ -1,10 +1,11 @@
 <template>
     <vue-resizable
-        class="resizable h-screen justify-beetween mt-8"
+        class="resizable h-screen h-[100vh + 10px] justify-between"
+        style="height: inherit"
         :min-width="300"
         :max-width="500"
         :width="300"
-        style="height: auto"
+        :active="['r']"
     >
         <div :class="sidebarClassName">
             <div id="add-config" :class="sideBarContentSeparationClassName">
@@ -75,10 +76,7 @@ export default defineComponent({
     },
     setup(props) {
         const sidebarClassName = computed(() => {
-            return twMerge(
-                'flex flex-col h-screen justify-beetween     h-[100vh + 10px] overflow-auto',
-                props.sidebarClass
-            );
+            return twMerge('flex flex-col h-screen h-[100vh + 10px] overflow-auto', props.sidebarClass);
         });
         const sideBarContentSeparationClassName = computed(() => {
             return twMerge('p-2 border-b-2 border-gray-600', props.sideBarContentSeparationClass);
