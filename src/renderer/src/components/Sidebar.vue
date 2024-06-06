@@ -84,7 +84,7 @@ export default defineComponent({
         const selectClassName = computed(() => {
             return twMerge(
                 'bg-gray-700 bg-transparent border border-gray-500 text-amber-200 text-sm' +
-                    'hover:border-grey-200 block w-full p-2.5',
+                    'hover:border-grey-200 block w-full p-2.5 rounded-lg focus:outline-none focus:border-amber-200 focus:ring-1 focus:ring-amber-500',
                 props.selectClass
             );
         });
@@ -115,7 +115,7 @@ export default defineComponent({
 
         async onFirebaseConfigChange(event: Event) {
             const target = event.target as HTMLSelectElement;
-            await window.context.initializeAdminApp(target.value);
+            await window.config.initializeAdminApp(target.value);
             await this.updateCurrentFirebaseConfig(target.value);
         },
 
@@ -132,7 +132,7 @@ export default defineComponent({
                 }
                 console.log(this.selectedConfig);
                 await this.updateCurrentFirebaseConfig(configName);
-                await window.context.createImportedConfigCopy(configFile.path, configName + '.json');
+                await window.config.createImportedConfigCopy(configFile.path, configName + '.json');
                 console.log(this.selectedConfig);
                 if (this.availableConfigs.includes(configName)) return;
                 await this.addFirebaseConfig(configName);

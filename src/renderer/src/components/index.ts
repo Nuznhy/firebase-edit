@@ -5,4 +5,5 @@ import AuthEdit from '@components/AuthEdit.vue';
 import DatabaseEdit from './DatabaseEdit.vue';
 import FirestoreEdit from './FirestoreEdit.vue';
 import Editor from './Editor.vue';
+
 export default [Home, Sidebar, HeaderComponent, AuthEdit, DatabaseEdit, FirestoreEdit, Editor];

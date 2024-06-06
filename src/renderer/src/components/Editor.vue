@@ -1,6 +1,7 @@
 <template>
     <codemirror
         v-model="code"
+        wrap
         placeholder="Json goes here..."
         :style="{
             backgroundColor: 'rgb(24 24 27 / 0.4) !important',
@@ -8,23 +9,25 @@
         }"
         :autofocus="true"
         :indent-with-tab="true"
-        :tab-size="2"
+        :tab-size="4"
         :extensions="extensions"
+        :linter="linter"
+        :lang="lang"
+        :gutter="true"
         @ready="handleReady"
-        @change="log('change', $event)"
-        @focus="log('focus', $event)"
-        @blur="log('blur', $event)"
     ></codemirror>
 </template>
-
+<!--@change="log('change', $event)"-->
+<!--@focus="log('focus', $event)"-->
+<!--@blur="log('blur', $event)"-->
 <script lang="ts">
 import { defineComponent, ref, shallowRef } from 'vue';
-import { Codemirror } from 'vue-codemirror';
-import { json, jsonParseLinter } from '@codemirror/lang-json';
+import { basicSetup } from 'codemirror';
+import Codemirror from 'vue-codemirror6';
+import { keymap } from '@codemirror/view';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { autocompletion } from '@codemirror/autocomplete';
-import { EditorState } from '@codemirror/state';
-import { EditorView } from 'codemirror';
+import { indentWithTab } from '@codemirror/commands';
+import { json, jsonParseLinter } from '@codemirror/lang-json';
 
 export default defineComponent({
     name: 'Editor',
@@ -32,9 +35,10 @@ export default defineComponent({
         Codemirror
     },
     setup() {
-        const code = ref(``);
-        const extensions = [json(), oneDark, autocompletion()];
+        const code = ref(`{}`);
+        const extensions = [basicSetup, oneDark, keymap.of([indentWithTab])];
         const linter = jsonParseLinter();
+        const lang = json();
         const view = shallowRef();
         const handleReady = (payload: any) => {
             view.value = payload.view;
@@ -55,8 +59,10 @@ export default defineComponent({
             code,
             extensions,
             linter,
+            lang,
             handleReady,
-            log: console.log
+            log: console.log,
+            getCodemirrorStates
         };
     }
 });

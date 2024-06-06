@@ -1,6 +1,16 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName, InitializeAdminApp } from '../shared/types';
+import {
+    CreateImportedConfigCopy,
+    GetConfigsFiles,
+    GetConfigFromFileName,
+    InitializeAdminApp,
+    ReadDocument,
+    ReadCollectionPaginated,
+    UpdateDocument,
+    SetDocument,
+    DeleteDocument
+} from '../shared/types';
 // import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
@@ -9,7 +19,7 @@ if (!process.contextIsolated) {
 }
 
 try {
-    contextBridge.exposeInMainWorld('context', {
+    contextBridge.exposeInMainWorld('config', {
         createImportedConfigCopy: (...args: Parameters<CreateImportedConfigCopy>) =>
             ipcRenderer.invoke('createImportedConfigCopy', ...args),
 
@@ -20,6 +30,19 @@ try {
 
         initializeAdminApp: (...args: Parameters<InitializeAdminApp>) =>
             ipcRenderer.invoke('initializeAdminApp', ...args)
+    });
+
+    contextBridge.exposeInMainWorld('firebase', {
+        readDocument: (...args: Parameters<ReadDocument>) => ipcRenderer.invoke('readDocument', ...args),
+
+        readCollectionPaginated: (...args: Parameters<ReadCollectionPaginated>) =>
+            ipcRenderer.invoke('readCollectionPaginated', ...args),
+
+        updateDocument: (...args: Parameters<UpdateDocument>) => ipcRenderer.invoke('updateDocument', ...args),
+
+        setDocument: (...args: Parameters<SetDocument>) => ipcRenderer.invoke('setDocument', ...args),
+
+        deleteDocument: (...args: Parameters<DeleteDocument>) => ipcRenderer.invoke('deleteDocument', ...args)
     });
 } catch (err) {
     console.log(err);

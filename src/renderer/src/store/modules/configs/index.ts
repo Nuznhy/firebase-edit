@@ -6,7 +6,7 @@ import { mutations } from './mutations';
 import { actions } from './actions';
 
 const state: ConfigState = {
-    availableConfigs: await window.context.getConfigsFiles(),
+    availableConfigs: await window.config.getConfigsFiles(),
     selectedConfig: 'Select',
     availableFirebaseModules: [
         { name: 'firestore', routerPath: '/firestore-edit' },
