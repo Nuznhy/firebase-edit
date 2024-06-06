@@ -31,5 +31,4 @@ export const initializeAdminApp: InitializeAdminApp = async (projectId: string):
             });
         }
     }
-    console.log(getApp().options);
 };

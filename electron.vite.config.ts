@@ -30,6 +30,26 @@ export default defineConfig({
                 '@views': resolve('src/renderer/src/views')
             }
         },
-        plugins: [vue()]
+        plugins: [vue()],
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        codemirror: [
+                            'vue-codemirror6',
+                            'codemirror',
+                            '@codemirror/autocomplete',
+                            '@codemirror/commands',
+                            '@codemirror/language',
+                            '@codemirror/lint',
+                            '@codemirror/search',
+                            '@codemirror/state',
+                            '@codemirror/view'
+                        ],
+                        'codemirror-lang': ['@codemirror/lang-json', '@codemirror/theme-one-dark']
+                    }
+                }
+            }
+        }
     }
 });

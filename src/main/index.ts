@@ -3,8 +3,19 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/Firestore.png?asset';
 import { createImportedConfigCopy, getConfigFromFileName, getConfigsFiles } from './lib';
-import { CreateImportedConfigCopy, GetConfigsFiles, GetConfigFromFileName, InitializeAdminApp } from '../shared/types';
+import {
+    CreateImportedConfigCopy,
+    GetConfigsFiles,
+    GetConfigFromFileName,
+    InitializeAdminApp,
+    ReadDocument,
+    ReadCollectionPaginated,
+    UpdateDocument,
+    SetDocument,
+    DeleteDocument
+} from '../shared/types';
 import { initializeAdminApp } from './lib/firebaseAdmin';
+import { deleteDocument, readCollectionPaginated, readDocument, setDocument, updateDocument } from './lib/firestore';
 
 const createWindow = (): void => {
     // Create the browser window.
@@ -64,6 +75,8 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
+
+    // Config actions
     ipcMain.handle(
         'getConfigsFiles',
         async (_, ...args: Parameters<GetConfigsFiles>) => await getConfigsFiles(...args)
@@ -83,6 +96,16 @@ app.whenReady().then(() => {
         'initializeAdminApp',
         async (_, ...args: Parameters<InitializeAdminApp>) => await initializeAdminApp(...args)
     );
+
+    // Firestore actions
+    ipcMain.handle('readDocument', async (_, ...args: Parameters<ReadDocument>) => await readDocument(...args));
+    ipcMain.handle(
+        'readCollectionPaginated',
+        async (_, ...args: Parameters<ReadCollectionPaginated>) => await readCollectionPaginated(...args)
+    );
+    ipcMain.handle('updateDocument', async (_, ...args: Parameters<UpdateDocument>) => await updateDocument(...args));
+    ipcMain.handle('setDocument', async (_, ...args: Parameters<SetDocument>) => await setDocument(...args));
+    ipcMain.handle('deleteDocument', async (_, ...args: Parameters<DeleteDocument>) => await deleteDocument(...args));
 
     app.commandLine.appendSwitch('enable-transparent-visuals');
     app.commandLine.appendSwitch('disable-gpu');
