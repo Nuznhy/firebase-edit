@@ -17,14 +17,16 @@ export const readDocument: ReadDocument = async (collection: string, document: s
         .doc(document)
         .get()
         .then(async (documentSnapshot: firestore.DocumentSnapshot<firestore.DocumentData, firestore.DocumentData>) => {
-            return {
+            return JSON.stringify({
                 data: documentSnapshot.data(),
                 id: documentSnapshot.id,
                 ref: documentSnapshot.ref
-            };
+            });
         })
         .catch((err: FirebaseError) => {
-            return { code: err.code, message: err.message };
+            const errorResponse = JSON.stringify({ code: err.code, message: err.message });
+            console.log(errorResponse);
+            return errorResponse;
         });
 };
 
@@ -78,15 +80,15 @@ export const readCollectionPaginated: ReadCollectionPaginated = async (
         .get()
         .then((snapshot) => {
             return snapshot.docs.forEach((documentSnapshot: firestore.QueryDocumentSnapshot) => {
-                return {
+                return JSON.stringify({
                     data: documentSnapshot.data(),
                     id: documentSnapshot.id,
                     ref: documentSnapshot.ref
-                };
+                });
             });
         })
         .catch((err: any) => {
-            return { code: err.code, message: err.message };
+            return JSON.stringify({ code: err.code, message: err.message });
         });
 };
 
@@ -95,9 +97,9 @@ export const updateDocument: UpdateDocument = async (collection: string, documen
         .collection(collection)
         .doc(document)
         .update(data)
-        .then((writeResult: firestore.WriteResult) => writeResult)
+        .then((writeResult: firestore.WriteResult) => JSON.stringify(writeResult))
         .catch((err: FirebaseError) => {
-            return { code: err.code, message: err.message };
+            return JSON.stringify({ code: err.code, message: err.message });
         });
 };
 
@@ -111,9 +113,9 @@ export const setDocument: SetDocument = async (
         .collection(collection)
         .doc(document)
         .set(data, options)
-        .then((writeResult: firestore.WriteResult) => writeResult)
+        .then((writeResult: firestore.WriteResult) => JSON.stringify(writeResult))
         .catch((err: FirebaseError) => {
-            return { code: err.code, message: err.message };
+            return JSON.stringify({ code: err.code, message: err.message });
         });
 };
 
@@ -122,8 +124,8 @@ export const deleteDocument: DeleteDocument = async (collection: string, documen
         .collection(collection)
         .doc(document)
         .delete()
-        .then((writeResult: firestore.WriteResult) => writeResult)
+        .then((writeResult: firestore.WriteResult) => JSON.stringify(writeResult))
         .catch((err: FirebaseError) => {
-            return { code: err.code, message: err.message };
+            return JSON.stringify({ code: err.code, message: err.message });
         });
 };

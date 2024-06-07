@@ -1,6 +1,7 @@
 import Vuex, { StoreOptions } from 'vuex';
 import { RootState } from './types';
 import { configs } from './modules/configs';
+import { firestore } from './modules/firestore';
 
 const store: StoreOptions<RootState> = {
     state: {
@@ -9,7 +10,8 @@ const store: StoreOptions<RootState> = {
     mutations: {},
     actions: {},
     modules: {
-        configs
+        configs,
+        firestore
     }
 };
 

@@ -32,7 +32,7 @@ try {
             ipcRenderer.invoke('initializeAdminApp', ...args)
     });
 
-    contextBridge.exposeInMainWorld('firebase', {
+    contextBridge.exposeInMainWorld('firestore', {
         readDocument: (...args: Parameters<ReadDocument>) => ipcRenderer.invoke('readDocument', ...args),
 
         readCollectionPaginated: (...args: Parameters<ReadCollectionPaginated>) =>

@@ -130,15 +130,13 @@ export default defineComponent({
                 } else {
                     configName = config.project_id;
                 }
-                console.log(this.selectedConfig);
-                await this.updateCurrentFirebaseConfig(configName);
+
                 await window.config.createImportedConfigCopy(configFile.path, configName + '.json');
-                console.log(this.selectedConfig);
                 if (this.availableConfigs.includes(configName)) return;
                 await this.addFirebaseConfig(configName);
+                console.log(this.selectedConfig);
             }
         }
     }
 });
 </script>
-<!-- TODO: add on hover bg-color change-->

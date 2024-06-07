@@ -1,6 +1,5 @@
 <template>
     <JsonEditorVue
-        v-model="code"
         :mode="Mode.text"
         :main-menu-bar="true"
         :ask-to-format="true"

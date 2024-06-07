@@ -2,11 +2,12 @@ import { initializeApp, credential, ServiceAccount } from 'firebase-admin';
 import { readFileSync } from 'fs-extra';
 import * as path from 'node:path';
 import { getRootDir } from './index';
-import { InitializeAdminApp } from '../../shared/types';
 import { deleteApp, getApp } from 'firebase-admin/app';
+import { InitializeAdminApp } from '../../shared/types';
+import { configsDirName } from '../../shared/constants';
 
 export const initializeAdminApp: InitializeAdminApp = async (projectId: string): Promise<void> => {
-    const credentialFile = readFileSync(path.join(getRootDir(), projectId + '.json'));
+    const credentialFile = readFileSync(path.join(getRootDir(), configsDirName, projectId + '.json'));
     const configParsed: any = JSON.parse(credentialFile.toString());
     let config: ServiceAccount;
     // console.log('json ', config);
