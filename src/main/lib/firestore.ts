@@ -79,13 +79,15 @@ export const readCollectionPaginated: ReadCollectionPaginated = async (
     return await ref
         .get()
         .then((snapshot) => {
-            return snapshot.docs.forEach((documentSnapshot: firestore.QueryDocumentSnapshot) => {
-                return JSON.stringify({
-                    data: documentSnapshot.data(),
-                    id: documentSnapshot.id,
-                    ref: documentSnapshot.ref
-                });
-            });
+            return JSON.stringify(
+                snapshot.docs.map((documentSnapshot: firestore.QueryDocumentSnapshot) => {
+                    return {
+                        data: documentSnapshot.data(),
+                        id: documentSnapshot.id,
+                        ref: documentSnapshot.ref
+                    };
+                })
+            );
         })
         .catch((err: any) => {
             return JSON.stringify({ code: err.code, message: err.message });
