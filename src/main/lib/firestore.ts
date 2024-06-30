@@ -17,11 +17,14 @@ export const readDocument: ReadDocument = async (collection: string, document: s
         .doc(document)
         .get()
         .then(async (documentSnapshot: firestore.DocumentSnapshot<firestore.DocumentData, firestore.DocumentData>) => {
-            return JSON.stringify({
-                data: documentSnapshot.data(),
-                id: documentSnapshot.id,
-                ref: documentSnapshot.ref
-            });
+            if (documentSnapshot.exists) {
+                return JSON.stringify({
+                    data: documentSnapshot.data(),
+                    id: documentSnapshot.id,
+                    ref: documentSnapshot.ref
+                });
+            }
+            return JSON.stringify({ message: `Document ${document} not found`, code: 'doc_not_found' });
         })
         .catch((err: FirebaseError) => {
             const errorResponse = JSON.stringify({ code: err.code, message: err.message });

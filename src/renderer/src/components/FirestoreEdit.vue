@@ -47,6 +47,8 @@ import Editor from './Editor.vue';
 import { twMerge } from 'tailwind-merge';
 import { mapActions, mapGetters } from 'vuex';
 import { FirestoreActionHistory } from '../store/modules/firestore/types';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 export default defineComponent({
     name: 'FirestoreEdit',
@@ -79,10 +81,14 @@ export default defineComponent({
         });
         return {
             selectClassName,
-            inputClassName,
+            inputClassName
+        };
+    },
+    data() {
+        return {
+            currentEditorBuffer: '{}',
             pageSize: 30,
             lastKey: undefined,
-            currentEditorBuffer: '{}',
             merge: true
         };
     },
@@ -100,6 +106,7 @@ export default defineComponent({
 
         async onPathChange(event: Event) {
             const target = event.target as HTMLInputElement;
+            console.log(target.value);
             await this.changePath(target.value);
         },
 
@@ -132,17 +139,24 @@ export default defineComponent({
         },
 
         async handleFirestoreAction() {
+            const $toast = useToast();
+
             if (this.currentAction.code === 'readDoc') {
                 const [collection, doc] = this.firestorePath.split('/').filter((path: string) => path.length > 1);
                 const result = JSON.parse(await window.firestore.readDocument(collection, doc));
+                await this.updateHistory(result);
 
-                if (result) {
-                    this.currentEditorBuffer = JSON.stringify(result.data);
-                    await this.updateCurrentData(JSON.stringify(result.data));
-                    await this.updateHistory(result);
+                if (result.code && result.message) {
+                    $toast.error(`Document not loaded\n${result.message}\n${result.code}`);
+                    return;
                 }
+
+                this.currentEditorBuffer = JSON.stringify(result.data);
+                await this.updateCurrentData(JSON.stringify(result.data));
+                $toast.success(`Document ${doc} loaded`);
                 return;
             }
+
             if (this.currentAction.code === 'readCol') {
                 const collection = this.firestorePath;
                 const result = JSON.parse(
@@ -155,29 +169,68 @@ export default defineComponent({
                         []
                     )
                 );
-                if (result) {
-                    const resultForBuffer = result.map((dbData: any) => dbData.data);
-                    await this.updateCurrentData(JSON.stringify(resultForBuffer));
-                    this.currentEditorBuffer = JSON.stringify(resultForBuffer);
-                    await this.updateHistory(result);
+
+                await this.updateHistory(result);
+                if (result.code && result.message) {
+                    $toast.error(`Documents not loaded\n${result.message}\n${result.code}`);
+                    return;
                 }
+
+                $toast.success(`Documents loaded`);
+
+                const resultForBuffer = result.map((dbData: any) => dbData.data);
+                await this.updateCurrentData(JSON.stringify(resultForBuffer));
+                this.currentEditorBuffer = JSON.stringify(resultForBuffer);
+
                 return;
             }
+
             if (this.currentAction.code === 'updateDoc') {
                 const [collection, doc] = this.firestorePath.split('/').filter((path: string) => path.length > 1);
-                await window.firestore.updateDocument(collection, doc, JSON.parse(this.currentEditorBuffer));
+                const result = await window.firestore.updateDocument(
+                    collection,
+                    doc,
+                    JSON.parse(this.currentEditorBuffer)
+                );
+
+                await this.updateHistory(result);
+                if (result.code && result.message) {
+                    $toast.error(`Document not updated\n${result.message}\n${result.code}`);
+                    return;
+                }
+
+                $toast.success(`Document ${doc} updated\n`);
                 return;
             }
+
             if (this.currentAction.code === 'setDoc') {
                 const [collection, doc] = this.firestorePath.split('/').filter((path: string) => path.length > 1);
-                await window.firestore.setDocument(collection, doc, JSON.parse(this.currentEditorBuffer), {
-                    merge: this.merge
-                });
+                const result = await window.firestore.setDocument(
+                    collection,
+                    doc,
+                    JSON.parse(this.currentEditorBuffer),
+                    {
+                        merge: this.merge
+                    }
+                );
+
+                if (result.code && result.message) {
+                    $toast.error(`Document not created/updated\n${result.message}\n${result.code}`);
+                    return;
+                }
+
+                $toast.success(`Document ${doc} created/updated\n`);
                 return;
             }
+
             if (this.currentAction.code === 'deleteDoc') {
                 const [collection, doc] = this.firestorePath.split('/').filter((path: string) => path.length > 1);
-                await window.firestore.deleteDocument(collection, doc);
+                const result = await window.firestore.deleteDocument(collection, doc);
+                if (result.code && result.message) {
+                    $toast.error(`Document not deleted\n${result.message}\n${result.code}`);
+                    return;
+                }
+                $toast.success(`Document ${doc} deleted\n`);
                 return;
             }
             return;
